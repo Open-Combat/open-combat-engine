@@ -1,10 +1,11 @@
 /**
  * This is the main Engine class. The Engine is responsible
- * for running all of the game's systems.
+ * for running all of the game's systems in the game loop.
  *
  * @class Engine
  */
 
+import { EventBus } from './EventBus.js'
 import { EntityManager } from './systems/EntityManager.js'
 // import { ComponentManager } from './systems/ComponentManager.js'
 // import { SystemManager } from './systems/SystemManager.js'
@@ -18,10 +19,9 @@ class Engine {
    * @memberof Engine
    */
   constructor() {
+    this.bus = new EventBus();
     this.systems = {}
-    this.systems.entityManager = new EntityManager();
-    // this.systems.componentManager = new ComponentManager();
-    // this.systems.systemManager = new SystemManager();
+    this.systems.entityManager = new EntityManager(bus);
   }
 
   /**
@@ -33,6 +33,7 @@ class Engine {
   start() {
     console.log('Engine starting...');
     // load the initial world state?
+    
 
     setInterval( () => this.gameloop(), 500);
     console.log('Engine started.');

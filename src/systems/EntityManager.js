@@ -8,9 +8,12 @@
 import { uuid } from '../utils/uuid.js'
 
 class EntityManager {
-  constructor() {
-    // something...
+  constructor(bus) {
     this.entities = {};
+    // setup event bus
+    this.bus = bus;
+    this.topics = ['entity'];
+    this.bus.subscribe(topics);
   }
 
   /**
@@ -19,13 +22,26 @@ class EntityManager {
    * @memberof EntityManager
    */
   run() {
-    // get all of the messages of the event bus
-    // process them in order
-    // think about this some more duh ugh
-    this.createEntity();
-    console.log(this.entities);
-    this.destroyEntity(9);
+    let events = this.bus.getEvents(topics);
+    for (event in events) {
+      this.processEvent(event);
+    }
   }
+
+  /**
+   * Handle an event from the event bus.
+   *
+   * @param {*} event TODO: define this class
+   * @memberof EntityManager
+   */
+  processEvent(event) {
+    if (event.name === 'create')
+      this.createEntity();
+    else if (event.name === 'destroy')
+      this.destroyEntity(event);
+    else
+      throw 'Invalid event name: ' + event.name
+   }
 
   /**
    * Creates a new entity which essentially is a unique id which
@@ -39,7 +55,9 @@ class EntityManager {
       throw new 'id:' + id + ' has already been generated';
     } else {
       this.entities.id = id;
-      return id;
+      // emit create entity event
+      let event = {name: 'entity/created', data: {id: id}};
+      this.bus.publish(event);
     }
   }
 
@@ -52,7 +70,9 @@ class EntityManager {
   destroyEntity(id) {
     if (typeof this.entities.id !== 'undefined') {
       delete this.entities.id
-      return id
+      // emit entity destroyed event
+      let event = {name: 'entity/destroyed', data: {id: id}};
+      this.bus.publish(event);
     } else {
       // throw error?
       throw "Entity with id:" + id + " does not exist"

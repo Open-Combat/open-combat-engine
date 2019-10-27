@@ -1,4 +1,3 @@
-
 function uuid() {
   return 0;
 }
