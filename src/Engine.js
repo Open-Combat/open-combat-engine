@@ -14,14 +14,17 @@ class Engine {
 
   /**
    * Creates an instance of engine as well as all of its 
-   * systems & managers.
+   * systems & the event bus.
    * 
    * @memberof Engine
    */
   constructor() {
     console.log('Initializing Engine...');
-    
+
+    // intializing event bus
     this.bus = new EventBus();
+
+    // intializing systems with reference to bus
     this.systems = {}
     this.systems.entityManager = new EntityManager(this.bus);
   }

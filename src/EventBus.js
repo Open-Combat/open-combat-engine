@@ -13,21 +13,6 @@ class EventBus {
   // 5. how to unsubscribe from a topic
 
   /**
-   * Registers a list of new topics with the bus
-   *
-   * @param {*} topic
-   * @memberof EventBus
-   */
-  register(topics) {
-    for (var topic in topics) {
-      if (typeof this.topics.topic === undefined)
-        this.topics.topic = [];
-      else
-        console.log('Attempt to register an already registered topic');
-    }
-  }
-
-  /**
    * Allow a subscriber to subscribe to a topic.
    *
    * @param {*} topics
@@ -46,10 +31,26 @@ class EventBus {
    * @param {*} event
    * @memberof EventBus
    */
-  publish(topic, event) {
-    console.log('Event published: ' + event + ' to topic: ' + topic);
+  publish(event) {
+    if (typeof event !== Event)
+      throw 'Attempt to publish invalid event type'
+    console.log('Event published: ' + event);
+    if(typeof this.topics[event.name] === undefined)
+      this.registerTopic(event.name);
+    this.topics[event.name].push(event);
+  }
 
-    this.topics.topic.push(event);
+  /**
+   * Registers a new topic with the bus
+   *
+   * @param {*} topic
+   * @memberof EventBus
+   */
+  registerTopic(topic) {
+    if (typeof this.topics[topic] === undefined)
+      this.topics[topic] = [];
+    else
+      console.log('Attempt to register an already registered topic');
   }
 
   /**
@@ -59,10 +60,13 @@ class EventBus {
    * @memberof EventBus
    */
   getEvents(topic) {
-    if (this.topics.topic)
-      throw 'Topic: ' + topic + 'does not exist'
-    return this.topics.topic;
+    console.log(this.topics[topic]);
+    if (typeof this.topics[topic] !== undefined)
+      return this.topics[topic];
+    else
+      throw 'Topic: ' + topic + 'does not exist'  
   }
+
 }
 
 export { EventBus }

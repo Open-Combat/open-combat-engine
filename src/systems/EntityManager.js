@@ -18,7 +18,6 @@ class EntityManager {
     // subscribe to relevant event topics
     this.bus = bus;
     this.topics = ['entity'];
-    this.bus.register(this.topics);
     this.bus.subscribe(this.topics);
 
     console.log('Created EntityManager.');
@@ -30,9 +29,13 @@ class EntityManager {
    * @memberof EntityManager
    */
   run() {
-    let events = this.bus.getEvents(this.topics);
-    for (event in events) {
-      this.processEvent(event);
+    for (var topic in this.topics) {
+      let events = this.bus.getEvents(this.topic);
+      for (var event in events) {
+        console.log('PROCESSING EVENT');
+        this.processEvent(event);
+        this.createEntity();
+      }
     }
   }
 
@@ -59,14 +62,14 @@ class EntityManager {
    */
   createEntity() {
     let id = uuid();
-    if (typeof this.entities.id !== 'undefined') {
-      throw new 'id:' + id + ' has already been generated';
-    } else {
+    if (typeof this.entities.id === 'undefined') {
       this.entities.id = id;
-      // emit create entity event
-      let event = new Event('entity-create', {id: id});
+      // publish create entity event
+      let event = new Event('entity', {id: id});
       this.bus.publish(event);
     }
+    else
+      throw new 'id:' + id + ' has already been generated';
   }
 
   /**
@@ -79,7 +82,7 @@ class EntityManager {
     if (typeof this.entities.id !== 'undefined') {
       delete this.entities.id
       // emit entity destroyed event
-      let event = {name: 'entity/destroyed', data: {id: id}};
+      let event = {name: 'entity', data: {id: id}};
       this.bus.publish(event);
     } else {
       // throw error?
