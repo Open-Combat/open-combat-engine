@@ -12,3 +12,5 @@ class Event {
     this.data = data;
   }
 }
+
+export { Event }

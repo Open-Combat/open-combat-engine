@@ -6,14 +6,22 @@
  */
 
 import { uuid } from '../utils/uuid.js'
+import { Event } from '../Event.js'
 
 class EntityManager {
   constructor(bus) {
+    console.log('Initializing EntityManager...');
+    
+    // create empty list of entities
     this.entities = {};
-    // setup event bus
+
+    // subscribe to relevant event topics
     this.bus = bus;
     this.topics = ['entity'];
-    this.bus.subscribe(topics);
+    this.bus.register(this.topics);
+    this.bus.subscribe(this.topics);
+
+    console.log('Created EntityManager.');
   }
 
   /**
@@ -22,7 +30,7 @@ class EntityManager {
    * @memberof EntityManager
    */
   run() {
-    let events = this.bus.getEvents(topics);
+    let events = this.bus.getEvents(this.topics);
     for (event in events) {
       this.processEvent(event);
     }
@@ -41,7 +49,7 @@ class EntityManager {
       this.destroyEntity(event);
     else
       throw 'Invalid event name: ' + event.name
-   }
+  }
 
   /**
    * Creates a new entity which essentially is a unique id which
@@ -56,7 +64,7 @@ class EntityManager {
     } else {
       this.entities.id = id;
       // emit create entity event
-      let event = {name: 'entity/created', data: {id: id}};
+      let event = new Event('entity-create', {id: id});
       this.bus.publish(event);
     }
   }
