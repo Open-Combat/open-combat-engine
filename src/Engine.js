@@ -46,8 +46,13 @@ class Engine {
   gameloop() {
     let start = performance.now();
 
-    this.systems.entityManager.run();     // run all of the systems in order
-    
+    try {                                 // run all of the systems in order
+      this.systems.entityManager.run();     
+    } 
+    catch (error) {
+      console.log(error.stack);
+    } 
+
     let end = performance.now(); 
     console.log('Ran gameloop in :' + (end-start).toFixed(3) + 'ms');
   }

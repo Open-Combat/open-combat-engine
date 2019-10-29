@@ -33,16 +33,13 @@ class EventBus {
 
     // if topic doesn't exist create a new event queue for the topic
     let topic = event.topic
-    if(typeof this.topics.topic === undefined) {
-      this.topics.topic = [];
+    if(typeof this.topics[topic] === 'undefined') {
+      this.topics[topic] = [];
       console.log('Topic created: ' + topic);
     }
 
-    console.log(topic)
-    console.log(JSON.stringify(this.topics))
-
     // push the event onto the topic's event queue
-    this.topics.topic.push(event);
+    this.topics[topic].push(event);
     console.log('Event published: ' + JSON.stringify(event));
   }
 
@@ -53,7 +50,6 @@ class EventBus {
    * @memberof EventBus
    */
   getEvents(topic) {
-    console.log(JSON.stringify(this.topics));
     // if the topic exists return the topic's event queue
     if (typeof this.topics[topic] !== undefined)
       return this.topics[topic];

@@ -42,11 +42,10 @@ class EntityManager {
   processEvent(event) {
     if (event.topic === EVENTS.createEntity)
       this.createEntity();
-    if (event.topic === EVENTS.destoryEntity) {
+    else if (event.topic === EVENTS.destoryEntity)
       this.destroyEntity(event.data.entityid);
-    }
     else
-      throw new Error('Invalid event' + event.type);
+      throw new Error('Invalid event: ' + event.topic);
   }
 
   /**
@@ -57,7 +56,7 @@ class EntityManager {
    */
   createEntity() {
     let id = uuid();
-    if (typeof this.entities.id === 'undefined') {
+    if (typeof this.entities[id] === 'undefined') {
       this.entities.id = id;
       // publish create entity event
       let event = new Event(EVENTS.entityCreated, {id: id});
@@ -74,8 +73,8 @@ class EntityManager {
    * @memberof EntityManager
    */
   destroyEntity(id) {
-    if (typeof this.entities.id !== 'undefined') {
-      delete this.entities.id
+    if (typeof this.entities[id] !== 'undefined') {
+      delete this.entities[id]
       // emit entity destroyed event
       let event = {name: 'entity', data: {id: id}};
       this.bus.publish(event);
