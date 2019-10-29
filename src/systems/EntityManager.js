@@ -10,25 +10,19 @@ import { Event } from '../Event.js'
 
 class EntityManager {
   constructor(bus) {
-    console.log('Initializing EntityManager...');
-    
-    // create empty list of entities
     this.entities = {};
-
-    // subscribe to relevant event topics
     this.bus = bus;
-    this.topics = ['entity'];
-    this.bus.subscribe(this.topics);
-
-    console.log('Created EntityManager.');
+    this.topics = ['entity']; 
   }
 
   /**
-   * Called during each iteration of the gameloop.
+   * Called during each iteration of the gameloop. Get all events 
+   * from the event bus and process in order.
    * 
    * @memberof EntityManager
    */
   run() {
+    console.log('EntityManager running...');
     for (var topic in this.topics) {
       let events = this.bus.getEvents(this.topic);
       for (var event in events) {

@@ -19,11 +19,8 @@ class Engine {
    * @memberof Engine
    */
   constructor() {
-    console.log('Initializing Engine...');
-
     // intializing event bus
     this.bus = new EventBus();
-
     // intializing systems with reference to bus
     this.systems = {}
     this.systems.entityManager = new EntityManager(this.bus);
@@ -31,12 +28,11 @@ class Engine {
 
   /**
    * This method starts the engine.
-   * (load initial states, begin game loop)
+   * (load initial state, begin game loop)
    *
    * @memberof Engine
    */
   start() {
-    console.log('Engine starting...');
     setInterval( () => this.gameloop(), 500);
     console.log('Engine started.');
   }
@@ -48,8 +44,12 @@ class Engine {
    * @memberof Engine
    */
   gameloop() {
-    console.log('Ran gameloop');
-    this.systems.entityManager.run();
+    let start = performance.now();
+
+    this.systems.entityManager.run();     // run all of the systems in order
+    
+    let end = performance.now(); 
+    console.log('Ran gameloop in :' + (end-start).toFixed(3) + 'ms');
   }
 }
 
