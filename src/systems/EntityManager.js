@@ -1,12 +1,14 @@
 /**
  * The EntityManager is responsible for managing the lifecycle
- * of entities (creation, destruction).
+ * of entities (creation, destruction) and notifying systems
+ * of these events.
  *
  * @class EntityManager
  */
 
 import { uuid } from '../utils/uuid.js'
-import { Event } from '../Event.js'
+import { Event } from '../events/Event.js'
+import { EVENTS } from '../events/EVENTS.js'
 
 class EntityManager {
   constructor(bus) {
@@ -23,14 +25,12 @@ class EntityManager {
    */
   run() {
     console.log('EntityManager running...');
-    for (var topic in this.topics) {
-      let events = this.bus.getEvents(this.topic);
-      for (var event in events) {
-        console.log('PROCESSING EVENT');
+    this.topics.forEach(topic => {
+      let events = this.bus.getEvents(topic);
+      events.forEach(event => {
         this.processEvent(event);
-        this.createEntity();
-      }
-    }
+      })
+    })
   }
 
   /**
@@ -40,12 +40,18 @@ class EntityManager {
    * @memberof EntityManager
    */
   processEvent(event) {
-    if (event.name === 'create')
-      this.createEntity();
-    else if (event.name === 'destroy')
-      this.destroyEntity(event);
+    if (event.topic === 'entity') {
+      let data = event.data;
+      console.log(JSON.stringify(data)); 
+      if (data.action === "create")
+        this.createEntity();
+      if (data.action === 'destroy')
+        this.destroyEntity(data);
+      else
+        throw new Error('Invalid event action: ' + data.action);
+    }
     else
-      throw 'Invalid event name: ' + event.name
+      throw new Error('Invalid event topic: ' + event.topic);
   }
 
   /**
@@ -63,7 +69,7 @@ class EntityManager {
       this.bus.publish(event);
     }
     else
-      throw new 'id:' + id + ' has already been generated';
+      throw new Error('id:' + id + ' has already been generated');
   }
 
   /**
@@ -80,7 +86,7 @@ class EntityManager {
       this.bus.publish(event);
     } else {
       // throw error?
-      throw "Entity with id:" + id + " does not exist"
+      throw new Error("Entity with id:" + id + " does not exist");
     }
   }
   

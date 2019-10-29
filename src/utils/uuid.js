@@ -1,5 +1,5 @@
 function uuid() {
-  return 0;
+  return Math.random();
 }
 
 export { uuid }

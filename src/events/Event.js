@@ -6,9 +6,12 @@
  *
  * @class Event
  */
+
+import { EVENTS } from './EVENTS'
+
 class Event {
   constructor(topic, data) {
-    this.topic = topic;
+    this.topic = EVENTS.topic;
     this.data = data;
   }
 }

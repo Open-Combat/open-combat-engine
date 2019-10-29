@@ -5,7 +5,7 @@
  * @class Engine
  */
 
-import { EventBus } from './EventBus.js'
+import { EventBus } from './events/EventBus.js'
 import { EntityManager } from './systems/EntityManager.js'
 // import { ComponentManager } from './systems/ComponentManager.js'
 // import { SystemManager } from './systems/SystemManager.js'
