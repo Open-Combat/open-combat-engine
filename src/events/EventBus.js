@@ -14,10 +14,9 @@ class EventBus {
   constructor() {
     this.topics = {}; // 'topic' : -> [events]
 
-
     // testing
     let event = new Event(EVENTS.createEntity, {});
-    this.topics['entity'] = [event];
+    this.topics[EVENTS.createEntity] = [event];
   }
 
   /**
@@ -31,14 +30,20 @@ class EventBus {
     // if the event isn't of type Event throw error
     if (!(event instanceof Event))
       throw new Error('Attempt to publish invalid event type');
-    console.log('Event published: ' + event);
 
     // if topic doesn't exist create a new event queue for the topic
-    if(typeof this.topics[event.topic] === undefined)
-      this.topics[event.topic] = [];
-    
+    let topic = event.topic
+    if(typeof this.topics.topic === undefined) {
+      this.topics.topic = [];
+      console.log('Topic created: ' + topic);
+    }
+
+    console.log(topic)
+    console.log(JSON.stringify(this.topics))
+
     // push the event onto the topic's event queue
-    this.topics[event.topic].push(event);
+    this.topics.topic.push(event);
+    console.log('Event published: ' + JSON.stringify(event));
   }
 
   /**

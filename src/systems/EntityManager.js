@@ -14,7 +14,7 @@ class EntityManager {
   constructor(bus) {
     this.entities = {};
     this.bus = bus;
-    this.topics = ['entity']; 
+    this.topics = [EVENTS.createEntity]; 
   }
 
   /**
@@ -40,18 +40,13 @@ class EntityManager {
    * @memberof EntityManager
    */
   processEvent(event) {
-    if (event.topic === 'entity') {
-      let data = event.data;
-      console.log(JSON.stringify(data)); 
-      if (data.action === "create")
-        this.createEntity();
-      if (data.action === 'destroy')
-        this.destroyEntity(data);
-      else
-        throw new Error('Invalid event action: ' + data.action);
+    if (event.topic === EVENTS.createEntity)
+      this.createEntity();
+    if (event.topic === EVENTS.destoryEntity) {
+      this.destroyEntity(event.data.entityid);
     }
     else
-      throw new Error('Invalid event topic: ' + event.topic);
+      throw new Error('Invalid event' + event.type);
   }
 
   /**
@@ -65,7 +60,7 @@ class EntityManager {
     if (typeof this.entities.id === 'undefined') {
       this.entities.id = id;
       // publish create entity event
-      let event = new Event('entity', {id: id});
+      let event = new Event(EVENTS.entityCreated, {id: id});
       this.bus.publish(event);
     }
     else
