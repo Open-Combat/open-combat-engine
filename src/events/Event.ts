@@ -1,3 +1,5 @@
+import { CreateEntityEvent } from "./CreateEntityEvent";
+
 /**
  * The event class encapsulates the topic of an event and the
  * data that it is meant to carry. Some examples of events
@@ -7,12 +9,10 @@
  * @class Event
  */
 
-import { EVENTS } from './EVENTS.js'
-
 class Event {
-  constructor(topic, data) {
+  topic: String
+  constructor(topic) {
     this.topic = topic;
-    this.data = data;
   }
 }
 

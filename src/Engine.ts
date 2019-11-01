@@ -5,12 +5,13 @@
  * @class Engine
  */
 
-import { EventBus } from './events/EventBus.js'
-import { EntityManager } from './systems/EntityManager.js'
-// import { ComponentManager } from './systems/ComponentManager.js'
-// import { SystemManager } from './systems/SystemManager.js'
+import { EventBus } from './events/EventBus'
+import { System } from './systems/System'
+import { EntityManager } from './systems/EntityManager'
 
 class Engine {
+  private systems: Array<System>
+  private bus: EventBus
 
   /**
    * Creates an instance of engine as well as all of its 
@@ -19,11 +20,9 @@ class Engine {
    * @memberof Engine
    */
   constructor() {
-    // intializing event bus
     this.bus = new EventBus();
-    // intializing systems with reference to bus
-    this.systems = {}
-    this.systems.entityManager = new EntityManager(this.bus);
+    this.systems = Array<System>();
+    this.systems.push(new EntityManager(this.bus));
   }
 
   /**
@@ -45,14 +44,9 @@ class Engine {
    */
   gameloop() {
     let start = performance.now();
-
-    try {                                 // run all of the systems in order
-      this.systems.entityManager.run();     
-    } 
-    catch (error) {
-      console.log(error.stack);
-    } 
-
+    for (let system of this.systems) {
+      system.run();
+    }
     let end = performance.now(); 
     console.log('Ran gameloop in :' + (end-start).toFixed(3) + 'ms');
   }
